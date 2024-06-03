@@ -7,6 +7,9 @@ import com.oferta.trabajo.service.IvacantesService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -48,6 +51,16 @@ private VacantesRepository vacantesRepo;
     @Override
     public void eliminar(Integer idVacante) {
         vacantesRepo.deleteById(idVacante);
+    }
+
+    @Override
+    public List<vacante> buscarByExample(Example<vacante> example) {
+       return vacantesRepo.findAll(example);
+    }
+
+    @Override
+    public Page<vacante> buscarTodas(Pageable page) {
+      return vacantesRepo.findAll(page);
     }
     
     

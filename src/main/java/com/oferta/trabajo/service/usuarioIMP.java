@@ -31,5 +31,11 @@ public class usuarioIMP implements IusuarioService  {
     public List<usuarios> buscarTodas() {
         return repoUsuario.findAll();
     }
+
+    @Override
+    public usuarios buscarPorUsername(String username){ 
+        return repoUsuario.findByUsername(username);
+    }
+    
     
 }

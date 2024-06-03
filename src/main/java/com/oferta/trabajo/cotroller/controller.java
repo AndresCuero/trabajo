@@ -12,11 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -52,7 +58,7 @@ public class controller {
         
         vacante vacante = new vacante();
         vacante.setNombre("programador en java");
-        vacante.setDescricion("programador de java con experiencia en spring boot ");
+        vacante.setDescripcion("programador de java con experiencia en spring boot ");
         vacante.setFecha(new Date());
         vacante.setSalario(999.0);
         
@@ -83,14 +89,25 @@ public class controller {
         
          List<vacante> lista = serviceVacante.buscarDestacada();
           model.addAttribute("vacantes", lista);
-      
-     
 
         return "home";
         
     }
     
-     @GetMapping("/r")
+    
+    @GetMapping("/index")
+    public String mostrarIndex(Authentication auth){
+         String username = auth.getName();
+         System.out.println("Nombre del usuario: "+ username);
+         for(GrantedAuthority rol: auth.getAuthorities()){
+           System.out.println("ROL: "+ rol.getAuthority() );
+         }
+         return "redirect:/";
+    }
+    
+  
+    
+ @GetMapping("/r")
 public String registrarse(Model model, usuarios usuario) {
      model.addAttribute("usuario", new usuarios());
     return "formRegistro";
@@ -111,16 +128,35 @@ public String registrarse(Model model, usuarios usuario) {
 		
 		return "redirect:/usuario/index";
 	}
+        
+  // los dos ultimo metodos tienen que ver con buscar
     @GetMapping("/search")
-    public String buscar(@ModelAttribute("search") vacante vacante) {
-        System.out.println("el objecto bacante :" + vacante);
+    public String buscar(@ModelAttribute("search") vacante vacante,Model model) {
+        
+        //para hacer que no busque comparando el codigo 
+        ExampleMatcher matcheer = ExampleMatcher.matching().
+                // where descripcion like '%?%'
+                withMatcher("descripcion", ExampleMatcher.GenericPropertyMatchers.contains());
+        
+        
+        //para hacacer busquedas
+        Example<vacante> example = Example.of(vacante, matcheer);
+        List<vacante> lista = serviceVacante.buscarByExample(example);
+        model.addAttribute("vacantes", lista);
         return "home";
-
+    }
+    
+    // InitBinder para string si los detecta vacios en el data Binding los settea a null
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder){
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true)); 
     }
 
 @ModelAttribute
 public void setGenerico(Model model){
 vacante vacanteSearch = new vacante();
+vacanteSearch.reset();
 model.addAttribute("vacantes",serviceVacante.budcarTodas());
 model.addAttribute("categorias", serviceCategoria.buscarTodas());
 model.addAttribute("search", vacanteSearch);

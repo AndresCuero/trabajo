@@ -47,7 +47,7 @@
            
                   <td th:text="${vacantes.categorias.nombre}"></td>  
                   <td th:text="${vacantes.nombre}"></td>                  
-                  <td th:text="${vacantes.fecha}"></td>
+                  <td th:text="${#dates.format (vacantes.fecha, 'dd-MM-yyyy' )}"></td>
                   <td th:text="${vacantes.estatus}"></td>
                   <td th:text="${vacantes.destacada == 1 ? 'SI' : 'NO'}"></td>
                   <td>
@@ -59,6 +59,13 @@
                               
               </tbody>
             </table>
+            
+            <nav th:if="${vacante.totalPages> 0}" aria-label="Page navigation example" >
+                <ul class="pagination">
+                    <li class="page-item"><a th:href="@{/vacantes/indexPaginate(page=${vacante.number - 1})}" class="page-link">Anterior</a></li>
+                    <li class="page-item"><a th:href="@{/vacantes/indexPaginate(page=${vacante.number + 1})}" class="page-link">Siguiente</a></li>
+                </ul>
+            </nav>
             
           </div>
         </div>

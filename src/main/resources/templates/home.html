@@ -29,8 +29,9 @@
                     <h3>Encuentra el trabajo que andas buscando.</h3>
                     Puedes buscar por descripción y categoría.
                     <form class="form-inline" th:action="@{/search}" method="get" th:object="${search}">
-                        <input type="text" class="form-control mb-3" th:field="*{descricion}" placeholder="Escriba una búsqueda">&nbsp;
-                        <select class="custom-select custom-select mb-3">
+                        <input type="text" class="form-control mb-3" th:field="*{descripcion}" placeholder="Escriba una búsqueda">&nbsp;
+                        <select th:field="*{categorias.id}"  class="custom-select custom-select mb-3">
+                            <option th:value="${null}">selecionar categorias</option>
                             <option th:each="categoria : ${categorias}" 
                                     th:value="${categoria.id}"
                                     th:text="${categoria.nombre}">                                       
@@ -54,7 +55,7 @@
                         <h2 th:text="${vacante.nombre}"></h2>
                         <h6 class="card-title"><strong>Categoría: </strong> <span th:text="${vacante.categorias.nombre}"></span></h6>
                         <h6 class="card-title"><strong>Publicado: </strong> <span th:text="${vacante.fecha}"> </span></h6>                
-                        <p th:text="${vacante.descricion}"> </p>
+                        <p th:text="${vacante.descripcion}"> </p>
                         <p><a class="btn btn-secondary" th:href="@{/vacantes/view/{id}(id=${vacante.id}) }" role="button">Detalles &raquo;</a></p>            
                     </div>
                 </div>  

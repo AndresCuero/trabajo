@@ -31,7 +31,8 @@ public class vacante {
     @JoinColumn(name="idCategoria")
     private categorias categorias;
     
-
+    public void reset(){
+    this.imagen=null;}
  
 
     // get
@@ -43,7 +44,7 @@ public class vacante {
         return nombre;
     }
 
-    public String getDescricion() {
+    public String getDescripcion() {
         return descripcion;
     }
 
@@ -92,7 +93,7 @@ public class vacante {
         this.nombre = nombre;
     }
 
-    public void setDescricion(String descricion) {
+    public void setDescripcion(String descricion) {
         this.descripcion = descricion;
     }
 
